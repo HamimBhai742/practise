@@ -1,0 +1,15 @@
+import { NextFunction, Request, Response } from "express";
+
+export const  globalErrorHandelar =(
+    err:any,
+    request:Request,
+    response:Response,
+    next:NextFunction
+)=>{
+let statusCode=500;
+let message="Somthing Is Wrong"
+let errorDeatils:any=[]
+
+
+
+}
