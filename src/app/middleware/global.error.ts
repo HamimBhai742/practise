@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-
-export const  globalErrorHandelar =(
+import httpStatus  from "http-status";
+ const  globalErrorHandelar =(
     err:any,
     request:Request,
     response:Response,
@@ -11,5 +11,12 @@ let message="Somthing Is Wrong"
 let errorDeatils:any=[]
 
 
+response.status(statusCode).json({
+    success:false,
+    message,
+    errorDeatils
+})
 
 }
+
+export default globalErrorHandelar

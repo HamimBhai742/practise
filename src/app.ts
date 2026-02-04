@@ -1,9 +1,9 @@
 import cors from "cors";
 import express, { Application, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import globalErrorHandler from "./app/middleware/global.error";
 import router from "./app/routes";
-import { stripeWebhook } from "./app/modules/stripe/stripeWebhook";
+// import { stripeWebhook } from "./app/modules/stripe/stripeWebhook";
 // import { revenuecatWebhookHandler } from "./app/modules/stripe/revenuecatWebhook";
 import path from "path";
 import { cronJob } from "./app/utils/cronJob";
@@ -19,12 +19,12 @@ app.use(
     credentials: true,
   })
 );
-app.post(
-  "/api/v1/webhook",
-  express.raw({ type: "application/json" }), // stripe expects raw body
-  // stripeWebhookHandler
-  stripeWebhook
-);
+// app.post(
+//   "/api/v1/webhook",
+//   express.raw({ type: "application/json" }), // stripe expects raw body
+//   // stripeWebhookHandler
+//   stripeWebhook
+// );
 // app.post(
 //   "/api/v1/webhook-revenuecat",
 //   express.raw({ type: "application/json" }),
