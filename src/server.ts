@@ -1,6 +1,7 @@
 import { Server } from "http";
 import app from "./app";
 import config from "./config";
+import { connectDB } from "./app/DB/connected.db";
 
 
 
@@ -11,6 +12,8 @@ async function main() {
   const httpServer: Server = app.listen(port, () => {
     console.log(`✅ Server is running on port ${port}`);
   });
+
+  connectDB()
 
  
   // graceful shutdown
