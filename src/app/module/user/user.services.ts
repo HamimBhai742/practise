@@ -62,24 +62,31 @@ const registerUserIntoDB = async (payload: UserPayload) => {
   });
 
   // Queue OTP *after* successful commit
-  await otpQueueEmail.add(
-    "registrationOtp",
-    {
-      // name: "loginOtp",
-      userName: result.name,
-      email: payload.email,
-      otpCode: otp,
-      subject: "Your Verification OTP",
-    },
-    {
-      jobId: `${result.id}-${Date.now()}`,
-      removeOnComplete: true,
-      attempts: 3,
-      backoff: { type: "fixed", delay: 5000 },
-    }
-  );
+//   await otpQueueEmail.add(
+//     "registrationOtp",
+//     {
+//       // name: "loginOtp",
+//       userName: result.name,
+//       email: payload.email,
+//       otpCode: otp,
+//       subject: "Your Verification OTP",
+//     },
+//     {
+//       jobId: `${result.id}-${Date.now()}`,
+//       removeOnComplete: true,
+//       attempts: 3,
+//       backoff: { type: "fixed", delay: 5000 },
+//     }
+//   );
+
+console.log(result)
 
   return {
     message: "Verification OTP sent to your email. Please verify to activate account.",
   };
 };
+
+
+export const userServices={
+    registerUserIntoDB
+}
