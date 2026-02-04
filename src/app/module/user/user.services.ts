@@ -14,7 +14,7 @@ interface UserPayload{
 }
 
 const registerUserIntoDB = async (payload: UserPayload) => {
-  const existingUser = await prisma.user.findFirst({
+  const existingUser = await prisma.user.findUnique({
     where: { email: payload?.email },
   });
   if (existingUser) {
@@ -24,43 +24,42 @@ const registerUserIntoDB = async (payload: UserPayload) => {
 
   const otp = generateOtp(4);
   const expiry = new Date(Date.now() + 10 * 60 * 1000);
+
   const transactionId = crypto.randomBytes(16).toString("hex");
 
-  const result = await prisma.$transaction(async (tx) => {
-    const newUser = await tx.user.create({
+//   const result = await prisma.$transaction(async (tx) => {
+    const newUser = await prisma.user.create({
       data: {
         name: payload.name,
         email: payload.email,
         password: hashedPassword,
-        fcmToken: payload.fcmToken || null,
+        fcmToken: payload?.fcmToken || null,
         twoFactor: true,
         twoFactorOTP: otp,
         twoFactorOTPExpires: expiry,
-      },
+      }
     });
 
-    await Promise.all([
-      tx.userSubscription.create({
-        data: {
-          userId: newUser.id,
-          planId: "68fc9404209bf54133292b28",
-          status: SubscriptionStatus.ACTIVE,
-          startDate: new Date(),
-          transactionId: `sub_${transactionId}`,
-          paymentMethod: "stripe",
-        },
-      }),
+    
 
-      tx.microGoal.create({
-        data: {
-          userId: newUser.id,
-        },
-      }),
-    ]);
+    // await Promise.all([
+    //   tx.userSubscription.create({
+    //     data: {
+    //       userId: newUser.id,
+    //       planId: "68fc9404209bf54133292b28",
+    //       status: SubscriptionStatus.ACTIVE,
+    //       startDate: new Date(),
+    //       transactionId: `sub_${transactionId}`,
+    //       paymentMethod: "stripe",
+    //     },
+    //   }),
 
-    return newUser;
-  });
-
+    //   tx.microGoal.create({
+    //     data: {
+    //       userId: newUser.id,
+    //     },
+    //   }),
+    // ]);
   // Queue OTP *after* successful commit
 //   await otpQueueEmail.add(
 //     "registrationOtp",
@@ -77,12 +76,10 @@ const registerUserIntoDB = async (payload: UserPayload) => {
 //       attempts: 3,
 //       backoff: { type: "fixed", delay: 5000 },
 //     }
-//   );
-
-console.log(result)
-
+//   )
   return {
     message: "Verification OTP sent to your email. Please verify to activate account.",
+    newUser
   };
 };
 

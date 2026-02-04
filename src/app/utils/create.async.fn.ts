@@ -1,6 +1,10 @@
-import { NextFunction, Request, Response } from "express"
+import { NextFunction, Request, Response } from "express";
 
-type asyncFn =(req:Request,res:Response,next:NextFunction)=>Promise<void>
-export const createAsyncFn=(fn:asyncFn)=>(req:Request,res:Response,next:NextFunction)=>{
-    fn(req,res,next).catch((err)=>next(err))
-}
+// Type for async Express handlers
+type AsyncFn = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+
+// Higher-order function to wrap async handlers and catch errors
+export const createAsyncFn = (fn: AsyncFn) => 
+    (req: Request, res: Response, next: NextFunction): void => {
+        fn(req, res, next).catch((err) => next(err));
+    };
